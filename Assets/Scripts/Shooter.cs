@@ -22,6 +22,7 @@ public class Shooter : MonoBehaviour {
 	private Vector2 initialTouchPos;
 	private Vector2 direction;
 	private int shotBalls;
+	private GameObject landedBall;
 
 	private void Awake() {
 		Messenger.AddListener<Ball>("HitBottom",BallHitBottom);
@@ -33,8 +34,13 @@ public class Shooter : MonoBehaviour {
 
 	public void Ready() {
 		canShoot = true;
+		gameObject.SetActive(true);
 		countLabel.gameObject.SetActive(true);
 		countLabel.text = string.Format("x{0}",balls);
+		if(landedBall != null) {
+			transform.position = landedBall.transform.position;
+			Destroy(landedBall.gameObject);
+		}
 	}
 
 	public void TryBeginAim(PointerEventData e) {
@@ -87,13 +93,12 @@ public class Shooter : MonoBehaviour {
 	}
 
 	private void BallHitBottom(Ball b) {
-		if(!gameObject.activeInHierarchy) {
-			gameObject.SetActive(true);
-			transform.position = b.transform.position;
-			transform.localPosition = new Vector3(transform.localPosition.x, 0, 0);
-			Destroy(b.gameObject);
+		if(landedBall == null) {
+			landedBall = b.gameObject;
+			landedBall.transform.SetParent(transform.parent);
+			landedBall.transform.localPosition = new Vector3(landedBall.transform.localPosition.x, 0, 0);
 		} else {
-			b.transform.DOMove(transform.position,0.1f)
+			b.transform.DOMove(landedBall.transform.position,0.1f)
 				.OnComplete( () => {
 					Destroy(b.gameObject);
 				});
