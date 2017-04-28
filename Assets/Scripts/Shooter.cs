@@ -14,6 +14,7 @@ public class Shooter : MonoBehaviour {
 	public float maxMagnitude = 15f;
 	public float scaleThreshold = 0.5f;
 	public float ballSpeed = 1f;
+	public float shotDelay = 0.2f;
 
 
 	private bool canShoot;
@@ -51,14 +52,27 @@ public class Shooter : MonoBehaviour {
 
 	public void TryShoot(PointerEventData e) {
 		if(canShoot && aim.activeInHierarchy) {
-			Ball b = Instantiate<Ball>(ballPrefab);
-			b.transform.SetParent(ballRoot,false);
-			b.transform.position = this.transform.position;
-			b.transform.localScale = Vector3.one;
-
-			b.rigidbody2d.velocity = direction.normalized * ballSpeed;
+			canShoot = false;
+			StartCoroutine(ShootRoutine());
 		}
 
 		aim.SetActive(false);
+	}
+
+	private IEnumerator ShootRoutine() {
+		for(int i  = 0; i < balls; i++) {
+			Shoot();
+			yield return new WaitForSeconds(shotDelay);
+		}
+		
+	}
+
+	private void Shoot() {
+		Ball b = Instantiate<Ball>(ballPrefab);
+		b.transform.SetParent(ballRoot,false);
+		b.transform.position = this.transform.position;
+		b.transform.localScale = Vector3.one;
+
+		b.rigidbody2d.velocity = direction.normalized * ballSpeed;
 	}
 }
