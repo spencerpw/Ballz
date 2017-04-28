@@ -15,15 +15,7 @@ public class GameManager : MonoBehaviour {
 	public TextMeshProUGUI levelLabel;
 	public TextMeshProUGUI pointsLabel;
 
-	private int level {
-		set {
-			level = value;
-			levelLabel.text = level.ToString();
-		}
-		get{
-			return level;
-		}
-	}
+	private int level;
 
 	private int points;
 	private List<Row> rows;
@@ -79,6 +71,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		level++;
+		levelLabel.text = (level-1).ToString();
 	}
 
 	private void PopulateRow(Row row) {
