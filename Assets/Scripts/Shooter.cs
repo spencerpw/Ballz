@@ -26,6 +26,7 @@ public class Shooter : MonoBehaviour {
 
 	private void Awake() {
 		Messenger.AddListener<Ball>("HitBottom",BallHitBottom);
+		Messenger.AddListener("ExtraBall",ExtraBall);
 	}
 
 	private void Start() {
@@ -66,16 +67,16 @@ public class Shooter : MonoBehaviour {
 		if(canShoot && aim.activeInHierarchy) {
 			canShoot = false;
 			shotBalls = balls;
-			StartCoroutine(ShootRoutine());
+			StartCoroutine(ShootRoutine(balls));
 		}
 
 		aim.SetActive(false);
 	}
 
-	private IEnumerator ShootRoutine() {
-		for(int i  = 0; i < balls; i++) {
+	private IEnumerator ShootRoutine(int b) {
+		for(int i  = 0; i < b; i++) {
 			Shoot();
-			countLabel.text = string.Format("x{0}",balls-i);
+			countLabel.text = string.Format("x{0}",b-i);
 			yield return new WaitForSeconds(shotDelay);
 		}
 
@@ -105,10 +106,15 @@ public class Shooter : MonoBehaviour {
 		}
 
 		shotBalls--;
+		Debug.Log(shotBalls);
 
 		if(shotBalls == 0) {
 			Ready();
 		}
 		
+	}
+
+	private void ExtraBall() {
+		balls++;
 	}
 }
