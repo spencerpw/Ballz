@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject gameRoot;
 	public GameObject gameOverRoot;
 	public GameObject pointPrefab;
-	public GameObject fastforwardButton;
+	//public GameObject fastforwardButton;
 	public float fastForwardScale = 4f;
 	public float fastForwardDelay = 5f;
 
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour {
 	//private IEnumerator Delay
 
 	private void HideFastForward() {
-		fastforwardButton.SetActive(false);
+		//fastforwardButton.SetActive(false);
 	}
 
 	public void NewGame(PointerEventData e) {
