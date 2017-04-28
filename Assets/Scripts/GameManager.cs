@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject gameRoot;
 	public GameObject gameOverRoot;
 	public GameObject pointPrefab;
+	public GameObject fastforwardButton;
+	public float fastForwardScale = 4f;
+	public float fastForwardDelay = 5f;
 
 	private int level;
 
@@ -30,10 +33,23 @@ public class GameManager : MonoBehaviour {
 
 		Messenger.AddListener("SpawnRow",SpawnRow);
 		Messenger.AddListener("Point",AddPoint);
+		//Messenger.AddListener("Shoot",DelayActivateFastForward);
+		Messenger.AddListener("HideFastForward",HideFastForward);
+
 	}
 
 	private void Start() {
 		ShowMainMenu();
+	}
+
+	public void FastForward() {
+		Time.timeScale = fastForwardScale;
+	}
+
+	//private IEnumerator Delay
+
+	private void HideFastForward() {
+		fastforwardButton.SetActive(false);
 	}
 
 	public void NewGame(PointerEventData e) {

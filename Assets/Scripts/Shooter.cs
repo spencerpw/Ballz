@@ -46,6 +46,9 @@ public class Shooter : MonoBehaviour {
 	}
 
 	public void Ready() {
+		Messenger.Broadcast("HideFastForward");
+
+		Time.timeScale = 1f;
 		canShoot = true;
 		gameObject.SetActive(true);
 		countLabel.gameObject.SetActive(true);
@@ -79,12 +82,13 @@ public class Shooter : MonoBehaviour {
 		if(canShoot && aim.activeInHierarchy) {
 			canShoot = false;
 			shotBalls = balls;
+			Messenger.Broadcast("Shoot");
 			StartCoroutine(ShootRoutine(balls));
 		}
 
 		aim.SetActive(false);
 	}
-
+		
 	private IEnumerator ShootRoutine(int b) {
 		for(int i  = 0; i < b; i++) {
 			Shoot();
