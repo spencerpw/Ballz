@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class Shooter : MonoBehaviour {
 	public int balls = 1;
@@ -20,6 +21,11 @@ public class Shooter : MonoBehaviour {
 	private bool canShoot;
 	private Vector2 initialTouchPos;
 	private Vector2 direction;
+	private int shotBalls;
+
+	private void Awake() {
+		Messenger.AddListener<Ball>("HitBottom",BallHitBottom);
+	}
 
 	private void Start() {
 		Ready();
@@ -53,6 +59,7 @@ public class Shooter : MonoBehaviour {
 	public void TryShoot(PointerEventData e) {
 		if(canShoot && aim.activeInHierarchy) {
 			canShoot = false;
+			shotBalls = balls;
 			StartCoroutine(ShootRoutine());
 		}
 
@@ -62,9 +69,12 @@ public class Shooter : MonoBehaviour {
 	private IEnumerator ShootRoutine() {
 		for(int i  = 0; i < balls; i++) {
 			Shoot();
+			countLabel.text = string.Format("x{0}",balls-i);
 			yield return new WaitForSeconds(shotDelay);
 		}
-		
+
+		this.gameObject.SetActive(false);
+		countLabel.gameObject.SetActive(false);
 	}
 
 	private void Shoot() {
@@ -74,5 +84,26 @@ public class Shooter : MonoBehaviour {
 		b.transform.localScale = Vector3.one;
 
 		b.rigidbody2d.velocity = direction.normalized * ballSpeed;
+	}
+
+	private void BallHitBottom(Ball b) {
+		if(!gameObject.activeInHierarchy) {
+			gameObject.SetActive(true);
+			transform.position = b.transform.position;
+			transform.localPosition = new Vector3(transform.localPosition.x, 0, 0);
+			Destroy(b.gameObject);
+		} else {
+			b.transform.DOMove(transform.position,0.1f)
+				.OnComplete( () => {
+					Destroy(b.gameObject);
+				});
+		}
+
+		shotBalls--;
+
+		if(shotBalls == 0) {
+			Ready();
+		}
+		
 	}
 }
