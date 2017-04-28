@@ -108,6 +108,7 @@ public class Shooter : MonoBehaviour {
 		shotBalls--;
 
 		if(shotBalls == 0) {
+			Messenger.Broadcast("SpawnRow");
 			Ready();
 		}
 		

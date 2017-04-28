@@ -12,6 +12,7 @@ public class Row : MonoBehaviour {
 	}
 
 	public HorizontalLayoutGroup layout;
+	public List<GameObject> occupants;
 
 	private void Start() {
 		LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());

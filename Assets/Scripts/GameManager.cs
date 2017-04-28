@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using TMPro;
 
 public class GameManager : MonoBehaviour {
 	public Row rowPrefab;
@@ -11,16 +12,32 @@ public class GameManager : MonoBehaviour {
 	public Transform rowRoot;
 	public Vector2 rowTop;
 	public Vector2 rowShift;
+	public TextMeshProUGUI levelLabel;
+	public TextMeshProUGUI pointsLabel;
 
-	private int level;
+	private int level {
+		set {
+			level = value;
+			levelLabel.text = level.ToString();
+		}
+		get{
+			return level;
+		}
+	}
+
+	private int points;
 	private List<Row> rows;
 
 	private void Awake() {
 		rows = new List<Row>();
+
+		Messenger.AddListener("SpawnRow",SpawnRow);
 	}
 
 	private void Start() {
 		level = 1;
+
+		SpawnRow();
 	}
 
 	public void SpawnRow() {
@@ -42,13 +59,30 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void ShiftRows() {
+		Row deadRow = null;
+
 		foreach(Row r in rows) {
 			r.transform.localPosition = r.transform.localPosition + (Vector3)rowShift;
+
+			Debug.Log(r.transform.localPosition.y);
+			if(r.transform.localPosition.y <= 70) {
+				if(r.occupants.Count( o => o != null) > 0)
+					Messenger.Broadcast("GameOver");
+				else
+					deadRow = r;
+			}
 		}
+
+		if(deadRow != null) {
+			rows.Remove(deadRow);
+			Destroy(deadRow.gameObject);
+		}
+
 		level++;
 	}
 
 	private void PopulateRow(Row row) {
+		row.occupants = new List<GameObject>();
 		List<Row.SlotType> slots = new List<Row.SlotType>();
 		int tiles = Random.Range(1,7);
 		slots.Add(Row.SlotType.BALL);
@@ -88,6 +122,7 @@ public class GameManager : MonoBehaviour {
 			if(go != null) {
 				go.transform.SetParent(row.transform,false);
 				go.transform.localScale = Vector3.one;
+				row.occupants.Add(go);
 			}
 		}
 	}
