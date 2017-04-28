@@ -27,9 +27,21 @@ public class Shooter : MonoBehaviour {
 	private void Awake() {
 		Messenger.AddListener<Ball>("HitBottom",BallHitBottom);
 		Messenger.AddListener("ExtraBall",ExtraBall);
+		Messenger.AddListener("NewGame", NewGame);
 	}
 
 	private void Start() {
+		Ready();
+	}
+
+	private void NewGame() {
+		if(landedBall !=  null)
+			Destroy(landedBall.gameObject);
+
+		transform.localPosition = Vector3.zero;
+		balls = 1;
+		landedBall = null;
+
 		Ready();
 	}
 
