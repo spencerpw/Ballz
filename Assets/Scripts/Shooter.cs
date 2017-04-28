@@ -8,10 +8,13 @@ public class Shooter : MonoBehaviour {
 	public int balls = 1;
 	public float speed = 1;
 	public GameObject aim;
-	public GameObject aimBalls;
+	public Transform ballRoot;
+	public Ball ballPrefab;
 	public TextMeshProUGUI countLabel;
 	public float maxMagnitude = 15f;
 	public float scaleThreshold = 0.5f;
+	public float ballSpeed = 1f;
+
 
 	private bool canShoot;
 	private Vector2 initialTouchPos;
@@ -38,7 +41,7 @@ public class Shooter : MonoBehaviour {
 			direction = initialTouchPos - e.position;
 			float mag = (initialTouchPos - e.position).magnitude;
 			float scale = Mathf.Clamp(mag/maxMagnitude, scaleThreshold, 1f);
-			float angle = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg + 90f;
+			float angle = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg + 90f; //Weird, but it works. Would come up with something better in more time
 			aim.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
 			aim.transform.localScale = Vector3.one * scale;
@@ -48,6 +51,12 @@ public class Shooter : MonoBehaviour {
 
 	public void TryShoot(PointerEventData e) {
 		if(canShoot && aim.activeInHierarchy) {
+			Ball b = Instantiate<Ball>(ballPrefab);
+			b.transform.SetParent(ballRoot,false);
+			b.transform.position = this.transform.position;
+			b.transform.localScale = Vector3.one;
+
+			b.rigidbody2d.velocity = direction.normalized * ballSpeed;
 		}
 
 		aim.SetActive(false);
