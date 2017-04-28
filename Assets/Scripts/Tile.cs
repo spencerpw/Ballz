@@ -8,6 +8,8 @@ public class Tile : MonoBehaviour {
 	public int value;
 
 	private void Start() {
+		if(Random.value > 0.5f)
+			value *= 2;
 		RefreshLabel();
 	}
 

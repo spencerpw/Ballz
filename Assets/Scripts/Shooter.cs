@@ -106,7 +106,6 @@ public class Shooter : MonoBehaviour {
 		}
 
 		shotBalls--;
-		Debug.Log(shotBalls);
 
 		if(shotBalls == 0) {
 			Ready();
