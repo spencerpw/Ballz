@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
 	public Row rowPrefab;
@@ -90,7 +91,7 @@ public class GameManager : MonoBehaviour {
 		rows.Add(row);
 
 		PopulateRow(row);
-		ShiftRows();
+		StartCoroutine(ShiftRows());
 	}
 
 	[ContextMenu("Spawn Rows")]
@@ -100,12 +101,18 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private void ShiftRows() {
+	private IEnumerator ShiftRows() {
+		Messenger.Broadcast<bool>("SetShooterEnabled",false);
 		Row deadRow = null;
 
 		foreach(Row r in rows) {
-			r.transform.localPosition = r.transform.localPosition + (Vector3)rowShift;
+			r.transform.DOLocalMoveY(r.transform.localPosition.y + rowShift.y,Row.SLIDE_DURATION)
+				.SetEase(Ease.Linear);
+		}
 
+		yield return new WaitForSeconds(Row.SLIDE_DURATION);
+
+		foreach(Row r in rows) {
 			if(r.transform.localPosition.y <= 70) {
 				if(r.occupants.Count( o => o != null && o.name != "Blank") > 0)
 					GameOver();
@@ -121,6 +128,8 @@ public class GameManager : MonoBehaviour {
 
 		level++;
 		levelLabel.text = (level-1).ToString();
+
+		Messenger.Broadcast<bool>("SetShooterEnabled",true);
 	}
 
 	public void ShowMainMenu(PointerEventData e = null) {

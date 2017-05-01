@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Row : MonoBehaviour {
+	public const float SLIDE_DURATION = 0.5f;
+
 	public enum SlotType{
 		BLANK,
 		TILE,

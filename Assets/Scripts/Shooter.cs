@@ -28,6 +28,12 @@ public class Shooter : MonoBehaviour {
 		Messenger.AddListener<Ball>("HitBottom",BallHitBottom);
 		Messenger.AddListener("ExtraBall",ExtraBall);
 		Messenger.AddListener("NewGame", NewGame);
+		Messenger.AddListener<bool>("SetShooterEnabled",SetEnabled);
+	}
+
+	public void SetEnabled(bool enabled) {
+		this.enabled = enabled;
+		canShoot = enabled;
 	}
 
 	private void Start() {
