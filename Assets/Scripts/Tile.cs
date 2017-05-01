@@ -8,6 +8,7 @@ public class Tile : MonoBehaviour {
 	public TextMeshProUGUI valueLabel;
 	public int value;
 	public Image bg;
+	[SerializeField]public ParticleSystem particles;
 
 	private void Start() {
 		if(Random.value > 0.5f)
@@ -19,7 +20,7 @@ public class Tile : MonoBehaviour {
 		if(value > 0)
 			valueLabel.text = value.ToString();
 		else
-			Destroy(gameObject);
+			Explode();
 
 		SetColour();
 	}
@@ -35,5 +36,12 @@ public class Tile : MonoBehaviour {
 		int j = (i+1)%7;
 		Color c = Color.Lerp(Colours.Instance.Ranges[i],Colours.Instance.Ranges[j],t);
 		bg.color = c;
+	}
+
+	public void Explode() {
+		particles.transform.SetParent(transform.parent);
+		particles.Play();
+
+		Destroy(gameObject);
 	}
 }
